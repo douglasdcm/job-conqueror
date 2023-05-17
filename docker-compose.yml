@@ -1,0 +1,15 @@
+version: "3.9.16"
+
+services:
+  db:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - vpm-data:/var/lib/pgsql
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgresql
+
+volumes:
+  vpm-data:
