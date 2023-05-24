@@ -29,13 +29,13 @@ Instale o Docker e Docker Compose, faça o build da imagem Docker e suba os cont
 ```
 ./utils/build_image.sh
 ```
-Copie o arquivo ".env_template" para ".env" e adicione dados de teste no banco de dados
-```
-python add_fake_data_to_databse.py
-```
 Após finalizar o build, suba o container:
 ```
 sudo docker compose up -d
+```
+Copie o arquivo ".env_template" para ".env" e adicione dados de teste no banco de dados
+```
+python add_fake_data_to_databse.py
 ```
 Acesse o link `http://localhost:5000`
 Agora você pode mexer no código à vontade.
