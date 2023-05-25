@@ -12,10 +12,10 @@ from dotenv import load_dotenv
 from os import environ
 
 
-nltk.download('stopwords', quiet=True)
-nltk.download('averaged_perceptron_tagger', quiet=True)
-nltk.download('wordnet', quiet=True)
-nltk.download('rslp', quiet=True)
+nltk.download("stopwords", quiet=True)
+nltk.download("averaged_perceptron_tagger", quiet=True)
+nltk.download("wordnet", quiet=True)
+nltk.download("rslp", quiet=True)
 
 
 load_dotenv()
@@ -35,10 +35,8 @@ class Connection:
     @classmethod
     def get_database_connection(cls, connection_string=None):
         if not cls.connection:
-            cls.connection = create_engine(cls.get_connection_string(
-                connection_string))
+            cls.connection = create_engine(cls.get_connection_string(connection_string))
         return cls.connection
-
 
 
 def save_description_to_database(database_string, url, description):
@@ -47,9 +45,11 @@ def save_description_to_database(database_string, url, description):
         print(message)
         info(message)
         description = data_pre_processing_portuguese(description)
-        connection.execute(text(
-            f"insert into {TABLE_NAME} (url, description) values ('{url}', '{description}')"
-        ))
+        connection.execute(
+            text(
+                f"insert into {TABLE_NAME} (url, description) values ('{url}', '{description}')"
+            )
+        )
 
 
 def initialize_table(database_string):
@@ -58,24 +58,26 @@ def initialize_table(database_string):
         print(message)
         info(message)
         connection.execute(text(f"drop table if exists {TABLE_NAME}"))
-        connection.execute(text(
-            f"create table {TABLE_NAME} (url VARCHAR(255) NOT NULL, description VARCHAR(50000))"
-        ))
+        connection.execute(
+            text(
+                f"create table {TABLE_NAME} (url VARCHAR(255) NOT NULL, description VARCHAR(50000))"
+            )
+        )
         print("Initialization finished")
         return True
 
 
 def data_pre_processing_portuguese(corpus):
     # remove html tags
-    corpus = sub(r'<.*?>', ' ', str(corpus))
+    corpus = sub(r"<.*?>", " ", str(corpus))
     # replace non-ascii characters
     corpus = unidecode(corpus)
     # remove non-alphanumeric characters
-    corpus = sub(r'[^a-z A-Z 0-9 \s]', ' ', str(corpus))
+    corpus = sub(r"[^a-z A-Z 0-9 \s]", " ", str(corpus))
     # remove numbers
     corpus = sub("\d+", " ", corpus)
     # remove duplicated spaces
-    corpus = sub(r' +', ' ', str(corpus))
+    corpus = sub(r" +", " ", str(corpus))
     # capitalization
     corpus = corpus.lower()
     # tokenization
@@ -85,7 +87,7 @@ def data_pre_processing_portuguese(corpus):
     corpus = [t for t in corpus if t not in stopwords_ and t not in punctuation]
     # steamming
     corpus = [steam_data(t) for t in corpus]
-    return ' '.join(list(set(corpus)))
+    return " ".join(list(set(corpus)))
 
 
 def get_all_positions_from_database(database_string):
@@ -109,18 +111,6 @@ def select_with_like(terms, table, column, condition="OR"):
     for term in terms:
         query += " {} {} LIKE '%{}%'".format(condition, column, term)
     return query
-
-
-def search_positions_based_on_resume(database_string, condition, resume):
-    resume_processed = data_pre_processing_portuguese(resume)
-    query = select_with_like(resume_processed, TABLE_NAME, "description", condition)
-    with Connection.get_database_connection(database_string).connect() as connection:
-        try:
-            positions = connection.execute(text(query)).all()
-        except Exception as error:
-            info(str(error))
-            raise DatabaseError(str(error))
-    return positions
 
 
 def steam_data(text):

@@ -1,9 +1,5 @@
 from logging import info
-from src.helper.helper import (
-    search_positions_based_on_resume,
-    Connection,
-    initialize_table
-)
+from src.helper.helper import Connection, initialize_table
 from src.driver.driver_factory import DriverFactory
 from src.exceptions.exceptions import CommandError
 from os import environ
@@ -40,7 +36,9 @@ def get_positions_data(database_string, companies):
             __finish_driver(driver_)
         # The execution need to continue even in case of errors
         except Exception as error:
-            message = f"Unexpected error occurred while getting position data. {str(error)}"
+            message = (
+                f"Unexpected error occurred while getting position data. {str(error)}"
+            )
             info(message)
             if environ.get("DEBUG") == "on":
                 raise CommandError(str(error))
@@ -64,7 +62,6 @@ def help_():
         "--overwrite       get the new positions from companies\n"
         "    --clean-db    clean up the database"
     )
-
 
 
 def overwrite(database_string, companies=None, clean_database=False):
