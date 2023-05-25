@@ -120,18 +120,6 @@ def select_with_like(terms, table, column, condition="OR"):
     return query
 
 
-def search_positions_based_on_resume(database_string, condition, resume):
-    resume_processed = data_pre_processing_portuguese(resume)
-    query = select_with_like(resume_processed, TABLE_NAME, "description", condition)
-    with Connection.get_database_connection(database_string).connect() as connection:
-        try:
-            positions = connection.execute(text(query)).all()
-        except Exception as error:
-            info(str(error))
-            raise DatabaseError(str(error))
-    return positions
-
-
 def steam_data(text):
     return RSLPStemmer().stem(text)
 

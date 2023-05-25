@@ -1,10 +1,10 @@
 from src.automation.automation import BaseObjects
 from selenium.webdriver.common.by import By
 from src.exceptions.exceptions import WebDriverError
+from caqui import synchronous
 
 
 class Positions:
-
     def __init__(self, driver) -> None:
         self._driver = driver
         self._base_objects = BaseObjects(driver)
@@ -15,11 +15,12 @@ class Positions:
             elements = self._base_objects.get_all_elements(by_type, locator)
             links = []
             for element in elements:
-                links.append(self._base_objects.get_attribute_from_element(element, 'href'))
+                links.append(
+                    self._base_objects.get_attribute_from_element(element, "href")
+                )
             return links
         except Exception as error:
             raise WebDriverError(f"Could not get element(s). {str(error)}")
-
 
     def go_to_page(self, url):
         try:

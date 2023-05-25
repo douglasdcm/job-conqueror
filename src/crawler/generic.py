@@ -6,11 +6,10 @@ from src.helper.helper import save_description_to_database, Connection
 
 
 class Generic:
-
     def __init__(self, locator):
         """
         This is what the name says: a generic crawler. It is intended to be used if the company's
-            page that has all the links of positions available in a single page without pagination.
+            page has all the links of positions available in a single page without pagination.
             Take the page bellow:
             (...)
                 <div class="menu-container">
@@ -51,7 +50,7 @@ class Generic:
                 save_description_to_database(
                     Connection.get_connection_string(),
                     link,
-                    self._positions.get_description()
+                    self._positions.get_description(),
                 )
             except WebDriverError as error:
                 message = f"Skipping process. Failed to get data from {link}"
