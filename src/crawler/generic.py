@@ -4,10 +4,13 @@ from os import environ
 from src.helper.helper import save_description_to_database, Connection
 from src.automation.automation import BaseObjects
 from selenium.webdriver.common.by import By
+from caqui import synchronous
+from src.settings import DRIVER_URL, CAPABILITIES
+from logging import info
 
 
 class Generic:
-    def __init__(self, driver, locator):
+    def __init__(self, locator):
         """
         This is what the name says: a generic crawler. It is intended to be used if the company's
             page has all the links of positions available in a single page without pagination.
@@ -28,7 +31,8 @@ class Generic:
         """
         self._url = None
         self._locator = locator
-        self._base_objects = BaseObjects(driver)
+        self._base_objects = None
+        self._session = None
 
     def __get_all_job_links(self, locator):
         try:
@@ -78,6 +82,26 @@ class Generic:
             return text
         except Exception as error:
             raise WebDriverError(f"Could not get description from page. {str(error)}")
+
+    def initialize(self):
+        try:
+            self._session = synchronous.get_session(DRIVER_URL, CAPABILITIES)
+            self._base_objects = BaseObjects(self._session)
+        except Exception as error:
+            info(str(error))
+            raise WebDriverError(
+                f"Unexpected error while starting the crawler. {str(error)}"
+            )
+
+    def quit(self):
+        try:
+            synchronous.close_session(DRIVER_URL, self._session)
+            info("Crawler finished.")
+        except Exception as error:
+            info(str(error))
+            raise WebDriverError(
+                f"Unexpected error while finishing the crawler. {str(error)}"
+            )
 
     def set_url(self, url):
         self._url = url

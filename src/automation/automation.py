@@ -6,9 +6,8 @@ from src.settings import DRIVER_URL, CAPABILITIES
 
 
 class BaseObjects:
-    def __init__(self, driver):
-        self._driver = driver
-        self._session = synchronous.get_session(DRIVER_URL, CAPABILITIES)
+    def __init__(self, session):
+        self._session = session
 
     def get_all_elements(self, by_type, locator):
         try:

@@ -50,6 +50,7 @@ def save_description_to_database(database_string, url, description):
                 f"insert into {TABLE_NAME} (url, description) values ('{url}', '{description}')"
             )
         )
+        connection.commit()
 
 
 def initialize_table(database_string):
