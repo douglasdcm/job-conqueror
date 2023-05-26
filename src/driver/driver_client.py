@@ -1,10 +1,8 @@
 from src.exceptions.exceptions import WebDriverError
 from caqui.synchronous import get_session, close_session
 from src.settings import DRIVER_URL
-from pytest import mark
 
 
-@mark.skip()
 class DriverClient:
     def __init__(self):
         self._session = None

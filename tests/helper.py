@@ -1,5 +1,5 @@
 from subprocess import PIPE, STDOUT, run
-from src.helper.commands import initialize_table
+from src.controller import initialize_table
 from sqlalchemy import text
 from tests.settings import DATABASE_STRING
 from src.helper.helper import data_pre_processing_portuguese, Connection
