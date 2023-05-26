@@ -6,20 +6,13 @@ from os import environ
 from src.crawler import generic
 
 
-def __finish_driver(chrome):
-    chrome.quit()
-    message = "Crawler finished."
-    print(message)
-    info(message)
-
-
 def get_jobs_data(database_string, companies):
     if not Connection.get_database_connection():
         return False
     for company in companies:
         if company["active"].upper() != "Y":
             continue
-        chrome = DriverFactory().get_driver()
+        crawler = generic.Generic(company["locator"])
         try:
             url = company["url"]
             message = f"Collecting data of company '{url}'"
@@ -28,22 +21,20 @@ def get_jobs_data(database_string, companies):
             message = "Starting crawler for '{}'...".format(url)
             print(message)
             info(message)
-            driver_ = chrome.start(url)
-            crawler = generic.Generic(driver_, company["locator"])
+            crawler.initialize()
             crawler.set_url(url)
             crawler.run()
-            __finish_driver(driver_)
+            crawler.quit()
+            print("Crawler finished.")
         # The execution need to continue even in case of errors
         except Exception as error:
-            message = (
-                f"Unexpected error occurred while getting position data. {str(error)}"
-            )
+            message = f"Unexpected error occurred while getting jobs data. {str(error)}"
             info(message)
             if environ.get("DEBUG") == "on":
                 raise CommandError(str(error))
         finally:
             try:
-                __finish_driver(chrome)
+                crawler.quit()
             except Exception:
                 pass
     return True
