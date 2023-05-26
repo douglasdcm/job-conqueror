@@ -1,6 +1,4 @@
-
 class SwitchTo:
-
     def default_content(self):
         pass
 
@@ -9,7 +7,6 @@ class SwitchTo:
 
 
 class FakeDriver:
-
     switch_to = SwitchTo()
 
     def start(self, url="url"):
@@ -33,7 +30,6 @@ class FakeDriver:
 
 
 class Fake_Element:
-
     text = "text_1"
 
     def get_attribute(self, attribute=None):
@@ -41,12 +37,3 @@ class Fake_Element:
 
     def click(self):
         pass
-
-
-class Fake_WebDriverWait:
-
-    def __init__(self, driver=None, timeout=None, poll_frequency=None):
-        pass
-
-    def until(self, predicate=None):
-        return True

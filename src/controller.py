@@ -13,7 +13,7 @@ def __finish_driver(chrome):
     info(message)
 
 
-def get_positions_data(database_string, companies):
+def get_jobs_data(database_string, companies):
     if not Connection.get_database_connection():
         return False
     for company in companies:
@@ -29,8 +29,7 @@ def get_positions_data(database_string, companies):
             print(message)
             info(message)
             driver_ = chrome.start(url)
-            crawler = generic.Generic(company["locator"])
-            crawler.set_driver(driver_)
+            crawler = generic.Generic(driver_, company["locator"])
             crawler.set_url(url)
             crawler.run()
             __finish_driver(driver_)
@@ -51,7 +50,7 @@ def get_positions_data(database_string, companies):
 
 
 def sanity_check(database_string, companies):
-    return get_positions_data(database_string, companies)
+    return get_jobs_data(database_string, companies)
 
 
 def help_():
@@ -70,6 +69,6 @@ def overwrite(database_string, companies=None, clean_database=False):
     info(message)
     if clean_database:
         initialize_table(database_string)
-    get_positions_data(database_string, companies)
+    get_jobs_data(database_string, companies)
     print("Update finished")
     return True
