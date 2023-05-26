@@ -1,16 +1,19 @@
 from logging import error as log_info
-from src.pages.generic.positions import Positions
 from src.exceptions.exceptions import WebDriverError, CrawlerError
 from os import environ
 from src.helper.helper import save_description_to_database, Connection
+from src.automation.automation import BaseObjects
+from selenium.webdriver.common.by import By
+from caqui import synchronous
+from src.settings import DRIVER_URL, CAPABILITIES
+from logging import info
 
 
 class Generic:
-
     def __init__(self, locator):
         """
         This is what the name says: a generic crawler. It is intended to be used if the company's
-            page that has all the links of positions available in a single page without pagination.
+            page has all the links of positions available in a single page without pagination.
             Take the page bellow:
             (...)
                 <div class="menu-container">
@@ -27,31 +30,38 @@ class Generic:
             locator (str): the locator of the links of positions, e.g. a.positions
         """
         self._url = None
-        self._positions = None
-        self.locator = locator
+        self._locator = locator
+        self._base_objects = None
+        self._session = None
 
-    def set_driver(self, driver):
-        self._positions = Positions(driver)
+    def __get_all_job_links(self, locator):
+        try:
+            by_type = By.XPATH
+            elements = self._base_objects.get_all_elements(by_type, locator)
+            links = []
+            for element in elements:
+                links.append(
+                    self._base_objects.get_attribute_from_element(element, "href")
+                )
+            return links
+        except Exception as error:
+            raise WebDriverError(f"Could not get element(s). {str(error)}")
 
-    def set_url(self, url):
-        self.url = url
+    def __go_to_page(self, url):
+        try:
+            self._base_objects.navigate_to(url)
+        except Exception as error:
+            raise WebDriverError(f"Could not navidate to page {url}. {str(error)}")
 
-    def run(self):
-        links = self._get_link_by_browser()
-        return self._get_info_from_links(links)
-
-    def _get_link_by_browser(self):
-        return self._positions.get_link_of_all_positons(self.locator)
-
-    def _get_info_from_links(self, links):
+    def __save_job_information(self, links):
         for link in links:
             try:
                 print(f"Collecting data from postion '{link}'")
-                self._positions.go_to_page(link)
+                self.__go_to_page(link)
                 save_description_to_database(
                     Connection.get_connection_string(),
                     link,
-                    self._positions.get_description()
+                    self.__get_job_description(),
                 )
             except WebDriverError as error:
                 message = f"Skipping process. Failed to get data from {link}"
@@ -62,3 +72,41 @@ class Generic:
             except Exception as error:
                 raise CrawlerError(str(error))
         return True
+
+    def __get_job_description(self):
+        try:
+            by_type = By.TAG_NAME
+            text = ""
+            text += " " + self._base_objects.get_text(by_type, "body")
+            text += " " + self._base_objects.get_text(by_type, "head")
+            return text
+        except Exception as error:
+            raise WebDriverError(f"Could not get description from page. {str(error)}")
+
+    def initialize(self):
+        try:
+            self._session = synchronous.get_session(DRIVER_URL, CAPABILITIES)
+            self._base_objects = BaseObjects(self._session)
+        except Exception as error:
+            info(str(error))
+            raise WebDriverError(
+                f"Unexpected error while starting the crawler. {str(error)}"
+            )
+
+    def quit(self):
+        try:
+            synchronous.close_session(DRIVER_URL, self._session)
+            info("Crawler finished.")
+        except Exception as error:
+            info(str(error))
+            raise WebDriverError(
+                f"Unexpected error while finishing the crawler. {str(error)}"
+            )
+
+    def set_url(self, url):
+        self._url = url
+
+    def run(self):
+        self.__go_to_page(self._url)
+        links = self.__get_all_job_links(self._locator)
+        return self.__save_job_information(links)

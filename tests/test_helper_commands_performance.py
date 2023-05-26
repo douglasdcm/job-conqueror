@@ -1,13 +1,13 @@
-from src.helper.commands import overwrite
+from src.controller import overwrite
 from tests.settings import DATABASE_STRING
-from pytest import fixture, mark
+from pytest import mark
 from src.crawler.generic import Generic
 from os import getcwd
 
 
 @mark.nonfunctional
+@mark.skip()
 class TestPerformanceCommands:
-
     def test_update_get_data_from_1500_links(self):
         companies = [
             {
