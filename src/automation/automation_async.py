@@ -1,7 +1,7 @@
 from logging import info
 from src.exceptions.exceptions import WebDriverError
 from os import environ
-from caqui import synchronous
+from caqui import synchronous, asynchronous
 from src.settings import DRIVER_URL
 
 
@@ -9,10 +9,10 @@ class BaseObjects:
     def __init__(self, session):
         self._session = session
 
-    def get_all_elements(self, by_type, locator):
+    async def get_all_elements(self, by_type, locator):
         try:
             info("Getting all elements '{}:{}'".format(by_type, locator))
-            elements = synchronous.find_elements(
+            elements = await asynchronous.find_elements(
                 DRIVER_URL, self._session, by_type, locator
             )
             if not elements:
@@ -23,23 +23,25 @@ class BaseObjects:
         except Exception as error:
             WebDriverError(f"Could not get elements. {str(error)}")
 
-    def get_attribute_from_element(self, element, property):
+    async def get_attribute_from_element(self, element, property):
         if environ.get("DEBUG") == "on":
             info("Getting attribute {} from element {}".format(property, element))
-        return synchronous.get_property(DRIVER_URL, self._session, element, property)
+        return await asynchronous.get_property(
+            DRIVER_URL, self._session, element, property
+        )
 
-    def navigate_to(self, url):
+    async def navigate_to(self, url):
         info("Navigate to '{}'".format(url))
         try:
-            synchronous.go_to_page(DRIVER_URL, self._session, url)
+            return await asynchronous.go_to_page(DRIVER_URL, self._session, url)
         except Exception as error:
             raise WebDriverError(str(error)) from error
 
-    def get_text(self, by_type, locator):
+    async def get_text(self, by_type, locator):
         try:
-            element = synchronous.find_element(
+            element = await asynchronous.find_element(
                 DRIVER_URL, self._session, by_type, locator
             )
-            return synchronous.get_text(DRIVER_URL, self._session, element)
+            return await asynchronous.get_text(DRIVER_URL, self._session, element)
         except Exception as error:
             raise WebDriverError(str(error)) from error
