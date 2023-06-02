@@ -1,4 +1,4 @@
-from src.controller import help_, overwrite, get_jobs_data, sanity_check
+from src.controller import help_, get_jobs_data, sanity_check, overwrite
 from tests.settings import DATABASE_STRING
 from pytest import fixture
 from os import getcwd
@@ -68,16 +68,13 @@ class TestHelperCommands:
         assert overwrite(DATABASE_STRING, companies) is True
 
     def test_run_by_db_string(self, get_companies):
-        assert (
-            get_jobs_data(database_string=DATABASE_STRING, companies=get_companies)
-            is True
-        )
+        assert get_jobs_data(companies=get_companies) is True
 
     def test_overwrite_database_returns_true(self, get_companies):
         assert overwrite(DATABASE_STRING, get_companies) is True
 
     def test_sanity_check_works(self, setup_db, get_companies):
-        assert sanity_check(DATABASE_STRING, get_companies) is True
+        assert sanity_check(get_companies) is True
 
     def test_help_is_opened(self):
         actual = help_()

@@ -44,7 +44,6 @@ class Generic:
                     element, "href"
                 )
                 links.append(link)
-            print("links", links)
             return links
         except Exception as error:
             raise WebDriverError(f"Could not get element(s). {str(error)}")
@@ -62,11 +61,11 @@ class Generic:
                 await self.__go_to_page(link)
                 await self.__get_job_description(),
 
-                # save_description_to_database(
-                #     Connection.get_connection_string(),
-                #     link,
-                #     await self.__get_job_description(),
-                # )
+                description = await self.__get_job_description()
+
+                save_description_to_database(
+                    Connection.get_connection_string(), link, description
+                )
             except WebDriverError as error:
                 message = f"Skipping process. Failed to get data from {link}"
                 print(message)
@@ -85,7 +84,6 @@ class Generic:
             text = ""
             text += " " + body
             text += " " + head
-            print("text", text)
             return text
         except Exception as error:
             raise WebDriverError(f"Could not get description from page. {str(error)}")

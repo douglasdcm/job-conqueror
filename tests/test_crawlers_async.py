@@ -8,8 +8,7 @@ from os import getcwd
 class TestCrawler:
     @fixture
     def setup(self, request):
-        # crawler = Generic("//a")
-        crawler = Generic('//a[contains(@title,"Veja detalhes")]')
+        crawler = Generic("//a")
 
         def quit():
             crawler.quit()
@@ -26,8 +25,7 @@ class TestCrawler:
 
         BASE_DIR = getcwd()
 
-        crawler.set_url(f"https://www.dqrtech.com.br/vagas/")
-        # crawler.set_url(f"file:///{BASE_DIR}/tests/resources/p_many_links.html")
+        crawler.set_url(f"file:///{BASE_DIR}/tests/resources/p_many_links.html")
         await crawler.run()
 
         end = time.time()
