@@ -1,8 +1,8 @@
 locator;carrers_url;enabled;
 //a[contains(@title,"Veja detalhes")];https://www.dqrtech.com.br/vagas/;Y;
-//a[contains(@class,"wp-block-cit-block-ciandt-link")];https://ciandt.com/us/en-us/careers/open-positions;Y;
-//a[contains(text(),"Candidatar")];https://www.cesar.org.br/vagas-em-aberto;IN_DB;
-//span[contains(@class,"hidden-phone")]//a[@class="jobTitle-link"];https://jobs.sap.com/search/?q=&locationsearch=&locale=en_US;IN_DB;
+//a[contains(@class,"wp-block-cit-block-ciandt-link")];https://ciandt.com/us/en-us/careers/open-positions;IN_DB;
+//a[contains(text(),"Candidatar")];https://www.cesar.org.br/vagas-em-aberto;Y;
+//span[contains(@class,"hidden-phone")]//a[@class="jobTitle-link"];https://jobs.sap.com/search/?q=&locationsearch=&locale=en_US;Y;
 TBD;https://evernote.com/careers/;NONE;No jobs indeed
 //section[contains(@class,"career-grid")]//a;https://www.elixirr.com/job-openings/;IN_DB;
 TBD;https://buzzfeed.com.br/about/jobs;NONE;No jobs indeed

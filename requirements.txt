@@ -1,3 +1,4 @@
+caqui
 nltk
 unidecode
 sqlalchemy

@@ -1,6 +1,5 @@
 from src.crawler.generic import Generic
 from src.crawler.company import Company
-from tests.resources.fake_driver import FakeDriver
 from pytest import mark, fixture
 
 

@@ -2,7 +2,7 @@ from logging import info
 from src.exceptions.exceptions import WebDriverError
 from os import environ
 from caqui import synchronous
-from src.settings import DRIVER_URL, CAPABILITIES
+from src.settings import DRIVER_URL
 
 
 class BaseObjects:

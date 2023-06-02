@@ -1,5 +1,5 @@
 # Introdução
-Este projeto utiliza um crawler genérico para buscar por vagas em diferentes empresas.
+Este projeto utiliza um crawler assíncrono e genérico para buscar por vagas em diferentes sites de empresas.
 
 # Começando
 Antes de começar a contribuir com o projeto, veja o nosso [Código de Conduta](https://github.com/douglasdcm/job-conqueror/blob/main/CODE_OF_CONDUCT.md).
@@ -17,7 +17,7 @@ Se você quiser adicionar mais empresas ao projeto é bem simples. Em poucos min
 # Atualizando o código fonte
 Para atualizar o código fonte, ative seu ambiente virtual e instale as dependências
 ```
-python3.6 -m venv env
+python3.7 -m venv env
 source venv/bin/activate
 pip install -r requirements.txt
 pip install -r test-requirements.txt
@@ -25,11 +25,7 @@ sudo mkdir -p /webapp/logs
 sudo cp ./src/resources/basic_page.html /webapp
 chmod -R 777 /webapp
 ```
-Instale o Docker e Docker Compose, faça o build da imagem Docker e suba os containers. Você pode usar o utilitário na pasta `./utils`
-```
-./utils/build_image.sh
-```
-Após finalizar o build, suba o container:
+Instale o Docker e Docker Compose e suba os containers.
 ```
 sudo docker compose up -d
 ```
@@ -37,23 +33,17 @@ Copie o arquivo ".env_template" para ".env" e adicione dados de teste no banco d
 ```
 python add_fake_data_to_databse.py
 ```
-Acesse o link `http://localhost:5000`
 Agora você pode mexer no código à vontade.
 
 # Rodando os testes
 
-- Baixe a versão correta do Chrome https://chromedriver.storage.googleapis.com/94.0.4606.41/chromedriver_linux64.zip
-- Instale a versão baixada do Chrome
-```
-sudo apt-get install ./src/resources/google-chrome-stable_current_amd64.deb
-```
-- Ou substitua o arquivo `./src/resources/chrome` para a mesma versão do Chrome instalado em sua máquina. Será preciso verificar a sua versão e baixar o driver correto https://chromedriver.chromium.org/downloads
-- Inicialize os containers manualmente (a issue https://github.com/douglasdcm/job-conqueror/issues/139 é para melhorar isso)
+Verifique a versão do seu navegador Chrome e baixe o webdriver correto pelo [link](https://chromedriver.chromium.org/downloads)
+- Inicialize o container do postgres manualmente (esse processo será melhorado no futuro)
 ```
 sudo docker compose up -d
 ```
 - Rode os testes.
-Atenção: os teste não funcionais demoram mais de uma hora para terminar. Melhor deixar pra rodar quando necessário
+Atenção: os teste não funcionais demoram mais de uma hora para terminar. Melhor deixar pra rodar quando necessário. Por enquanto, execute os testes funcionais para validar seu setup.
 ```
 python -m pytest -m functional
 ```
@@ -67,7 +57,7 @@ ou com os utilitários
 ```
 
 ## Testes não funcionais
-Para executar os testes de performance da API REST (demoram mais de 1h)
+Para executar os testes de performance (estes demoram mais de 1h)
 ```
 ./utils/run_non_functional.sh
 ```
@@ -83,13 +73,15 @@ References about snakeviz
 - https://docs.python.org/3/library/profile.html#module-cProfile
 
 # Debug
-- Ver número de conexões no banco de dados
+
 ```
-select count(*) from pg_stat_activity;
-```
-- Conectar no banco de dados
-```
-docker exec -it postgres psql -U postgres
+$ docker exec -it postgres psql -U postgres
+
+# Ver número de conexões no banco de dados
+postgres=# select count(*) from pg_stat_activity;
+
+# Contar o número de registros coletados
+postgres=# select count(*) from positions;
 ```
 - Logs da aplicação
 ```
@@ -97,7 +89,7 @@ tail -f /webapp/logs/crawlers.log
 ```
 
 # Contribuindo
-Ajude este projeto a crescer adicionando novas empresas. Que tal começar pelas empresas GPTW do Brasil de 2020? https://conteudo.gptw.com.br/150-melhores-2020.<br>
+Ajude este projeto a crescer adicionando novas empresas ou adicionando os 'locators' das empresas que estão pendentes.<br>
 Pull requests são bem-vindas. Para mudanças grandes crie uma issue para discutirmos o que está sendo modificado. Adicione os testes apropriados.
 
 Dê uma estrelinha se você gostou deste projeto :)

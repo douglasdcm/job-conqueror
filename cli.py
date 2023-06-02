@@ -5,11 +5,11 @@ Try: 'python cli.py --help' for more information.
 from logging import basicConfig, INFO
 from src.settings import ROOT_DIR, LOG_FILE, RESOURCES_DIR
 from sys import argv, path
-from src.controller import sanity_check, help_, overwrite
-from src.crawler.company import Company
+from src.controller import overwrite, sanity_check, help_
 from os import getcwd, system
 from dotenv import load_dotenv
 from src.helper.helper import Connection
+from src.crawler.company import Company
 
 
 load_dotenv()  # take environment variables from .env.
@@ -40,11 +40,10 @@ def main(*args):
                 clean_database = False
                 if "--clean-db" in arguments:
                     clean_database = True
-                return overwrite(
-                    Connection.get_connection_string(),
-                    Company().get_all(),
-                    clean_database,
-                )
+                database_string = Connection.get_connection_string()
+                companies = Company().get_all()
+
+                overwrite(database_string, companies, clean_database)
             elif "--sanity-check" in arguments:
                 fake_companies = [
                     {
@@ -55,7 +54,7 @@ def main(*args):
                         "active": "Y",
                     }
                 ]
-                return sanity_check(Connection.get_connection_string(), fake_companies)
+                return sanity_check(fake_companies)
             else:
                 print("Invalid command. Try cli.py --help ")
     except Exception as error:
