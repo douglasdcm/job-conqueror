@@ -8,9 +8,10 @@ LOGS_FOLDER = "/webapp/logs/"
 DRIVER_URL = "http://127.0.0.1:9999"
 CAPABILITIES = {
     "desiredCapabilities": {
-        "browserName": "firefox",
-        "marionette": True,
+        "browserName": "anydriver",
         "acceptInsecureCerts": True,
+        "pageLoadStrategy": "eager",
+        "goog:chromeOptions": {"extensions": [], "args": ["--headless"]},
     }
 }
 
